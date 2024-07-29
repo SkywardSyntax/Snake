@@ -6,6 +6,7 @@ const SnakeGame = () => {
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [pressedKeys, setPressedKeys] = useState({});
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -18,32 +19,47 @@ const SnakeGame = () => {
       DOWN: 'UP',
       LEFT: 'RIGHT',
       RIGHT: 'LEFT',
+      UP_LEFT: 'DOWN_RIGHT',
+      UP_RIGHT: 'DOWN_LEFT',
+      DOWN_LEFT: 'UP_RIGHT',
+      DOWN_RIGHT: 'UP_LEFT',
     };
     return opposites[newDirection] === currentDirection;
   };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      const newPressedKeys = { ...pressedKeys, [e.key]: true };
+      setPressedKeys(newPressedKeys);
+
       let newDirection;
-      switch (e.key) {
-        case 'ArrowUp':
-          newDirection = 'UP';
-          break;
-        case 'ArrowDown':
-          newDirection = 'DOWN';
-          break;
-        case 'ArrowLeft':
-          newDirection = 'LEFT';
-          break;
-        case 'ArrowRight':
-          newDirection = 'RIGHT';
-          break;
-        default:
-          break;
+      if (newPressedKeys['ArrowUp'] && newPressedKeys['ArrowLeft']) {
+        newDirection = 'UP_LEFT';
+      } else if (newPressedKeys['ArrowUp'] && newPressedKeys['ArrowRight']) {
+        newDirection = 'UP_RIGHT';
+      } else if (newPressedKeys['ArrowDown'] && newPressedKeys['ArrowLeft']) {
+        newDirection = 'DOWN_LEFT';
+      } else if (newPressedKeys['ArrowDown'] && newPressedKeys['ArrowRight']) {
+        newDirection = 'DOWN_RIGHT';
+      } else if (newPressedKeys['ArrowUp']) {
+        newDirection = 'UP';
+      } else if (newPressedKeys['ArrowDown']) {
+        newDirection = 'DOWN';
+      } else if (newPressedKeys['ArrowLeft']) {
+        newDirection = 'LEFT';
+      } else if (newPressedKeys['ArrowRight']) {
+        newDirection = 'RIGHT';
       }
+
       if (newDirection && !isOppositeDirection(newDirection, direction)) {
         setDirection(newDirection);
       }
+    };
+
+    const handleKeyUp = (e) => {
+      const newPressedKeys = { ...pressedKeys };
+      delete newPressedKeys[e.key];
+      setPressedKeys(newPressedKeys);
     };
 
     const disableScroll = (e) => {
@@ -53,13 +69,15 @@ const SnakeGame = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('keydown', disableScroll);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('keydown', disableScroll);
     };
-  }, [direction]);
+  }, [direction, pressedKeys]);
 
   useEffect(() => {
     if (gameOver) return;
@@ -67,6 +85,8 @@ const SnakeGame = () => {
     const moveSnake = () => {
       const newSnake = [...snake];
       const head = { ...newSnake[0] };
+
+      const speedFactor = Math.sqrt(2) / 2;
 
       switch (direction) {
         case 'UP':
@@ -80,6 +100,22 @@ const SnakeGame = () => {
           break;
         case 'RIGHT':
           head.x += 1;
+          break;
+        case 'UP_LEFT':
+          head.y -= speedFactor;
+          head.x -= speedFactor;
+          break;
+        case 'UP_RIGHT':
+          head.y -= speedFactor;
+          head.x += speedFactor;
+          break;
+        case 'DOWN_LEFT':
+          head.y += speedFactor;
+          head.x -= speedFactor;
+          break;
+        case 'DOWN_RIGHT':
+          head.y += speedFactor;
+          head.x += speedFactor;
           break;
         default:
           break;
