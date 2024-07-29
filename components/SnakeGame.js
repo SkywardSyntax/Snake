@@ -5,6 +5,11 @@ const SnakeGame = () => {
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -88,7 +93,10 @@ const SnakeGame = () => {
   }, [snake, direction, food, gameOver]);
 
   return (
-    <div className="snake-game">
+    <div className={`snake-game ${darkMode ? 'dark-mode' : ''}`}>
+      <button onClick={toggleDarkMode}>
+        {darkMode ? 'Light Mode' : 'Dark Mode'}
+      </button>
       {gameOver ? (
         <div>Game Over</div>
       ) : (
@@ -99,9 +107,9 @@ const SnakeGame = () => {
                 key={`${row}-${col}`}
                 className={`cell ${
                   snake.some((segment) => segment.x === col && segment.y === row)
-                    ? 'snake'
+                    ? `snake ${darkMode ? 'dark-mode' : ''}`
                     : food.x === col && food.y === row
-                    ? 'food'
+                    ? `food ${darkMode ? 'dark-mode' : ''}`
                     : ''
                 }`}
               />

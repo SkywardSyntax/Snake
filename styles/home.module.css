@@ -30,10 +30,24 @@
   background-color: #e0e0e0;
 }
 
+.cell.dark-mode {
+  background-color: #333;
+}
+
 .snake {
   background-color: #4caf50;
+  transition: background-color 0.3s ease;
+}
+
+.snake.dark-mode {
+  background-color: #00FF00;
 }
 
 .food {
   background-color: #f44336;
+  transition: background-color 0.3s ease;
+}
+
+.food.dark-mode {
+  background-color: #FF0000;
 }
