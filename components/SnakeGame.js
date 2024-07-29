@@ -12,32 +12,54 @@ const SnakeGame = () => {
     document.body.classList.toggle('dark-mode', !darkMode);
   };
 
+  const isOppositeDirection = (newDirection, currentDirection) => {
+    const opposites = {
+      UP: 'DOWN',
+      DOWN: 'UP',
+      LEFT: 'RIGHT',
+      RIGHT: 'LEFT',
+    };
+    return opposites[newDirection] === currentDirection;
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
+      let newDirection;
       switch (e.key) {
         case 'ArrowUp':
-          setDirection('UP');
+          newDirection = 'UP';
           break;
         case 'ArrowDown':
-          setDirection('DOWN');
+          newDirection = 'DOWN';
           break;
         case 'ArrowLeft':
-          setDirection('LEFT');
+          newDirection = 'LEFT';
           break;
         case 'ArrowRight':
-          setDirection('RIGHT');
+          newDirection = 'RIGHT';
           break;
         default:
           break;
       }
+      if (newDirection && !isOppositeDirection(newDirection, direction)) {
+        setDirection(newDirection);
+      }
+    };
+
+    const disableScroll = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', disableScroll);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', disableScroll);
     };
-  }, []);
+  }, [direction]);
 
   useEffect(() => {
     if (gameOver) return;

@@ -39,7 +39,7 @@
 .cell {
   width: 20px;
   height: 20px;
-  background-color: #4caf50;
+  background-color: #8bc34a;
   border-radius: 3px;
   transition: background-color 0.3s ease;
 }
@@ -49,9 +49,8 @@
 }
 
 .snake {
-  background-color: #4caf50;
+  background-color: #388e3c;
   transition: background-color 0.3s ease;
-  animation: snake-move 0.2s linear infinite;
 }
 
 .snake.dark-mode {
@@ -59,7 +58,7 @@
 }
 
 .food {
-  background-color: #f44336;
+  background-color: #ff1744;
   transition: background-color 0.3s ease;
   animation: food-blink 1s linear infinite;
 }
