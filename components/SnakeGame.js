@@ -9,6 +9,7 @@ const SnakeGame = () => {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode', !darkMode);
   };
 
   useEffect(() => {
@@ -85,38 +86,56 @@ const SnakeGame = () => {
       }
     };
 
-    const interval = setInterval(moveSnake, 200);
+    const interval = setInterval(moveSnake, 100);
 
     return () => {
       clearInterval(interval);
     };
   }, [snake, direction, food, gameOver]);
 
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', darkMode);
+  }, [darkMode]);
+
+  const handleRestart = () => {
+    setSnake([{ x: 10, y: 10 }]);
+    setFood({ x: 15, y: 15 });
+    setDirection('RIGHT');
+    setGameOver(false);
+  };
+
+  const renderGameOverScreen = () => (
+    <div className="game-over-screen">
+      <h2>Game Over</h2>
+      <button onClick={handleRestart}>Restart</button>
+    </div>
+  );
+
+  const renderGrid = () => (
+    <div className="grid">
+      {Array.from({ length: 20 }).map((_, row) =>
+        Array.from({ length: 20 }).map((_, col) => (
+          <div
+            key={`${row}-${col}`}
+            className={`cell ${
+              snake.some((segment) => segment.x === col && segment.y === row)
+                ? `snake ${darkMode ? 'dark-mode' : ''}`
+                : food.x === col && food.y === row
+                ? `food ${darkMode ? 'dark-mode' : ''}`
+                : ''
+            }`}
+          />
+        ))
+      )}
+    </div>
+  );
+
   return (
     <div className={`snake-game ${darkMode ? 'dark-mode' : ''}`}>
       <button onClick={toggleDarkMode}>
         {darkMode ? 'Light Mode' : 'Dark Mode'}
       </button>
-      {gameOver ? (
-        <div>Game Over</div>
-      ) : (
-        <div className="grid">
-          {Array.from({ length: 20 }).map((_, row) =>
-            Array.from({ length: 20 }).map((_, col) => (
-              <div
-                key={`${row}-${col}`}
-                className={`cell ${
-                  snake.some((segment) => segment.x === col && segment.y === row)
-                    ? `snake ${darkMode ? 'dark-mode' : ''}`
-                    : food.x === col && food.y === row
-                    ? `food ${darkMode ? 'dark-mode' : ''}`
-                    : ''
-                }`}
-              />
-            ))
-          )}
-        </div>
-      )}
+      {gameOver ? renderGameOverScreen() : renderGrid()}
     </div>
   );
 };

@@ -29,13 +29,14 @@ body.dark-mode {
   display: grid;
   grid-template-columns: repeat(20, 20px);
   grid-template-rows: repeat(20, 20px);
-  gap: 1px;
+  gap: 0;
 }
 
 .cell {
   width: 20px;
   height: 20px;
-  background-color: #e0e0e0;
+  background-color: #4caf50;
+  transition: background-color 0.3s ease;
 }
 
 .cell.dark-mode {
@@ -44,7 +45,8 @@ body.dark-mode {
 
 .snake {
   background-color: #4caf50;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.5s ease, transform 0.5s ease;
+  animation: snake-move 0.2s linear infinite;
 }
 
 .snake.dark-mode {
@@ -53,9 +55,20 @@ body.dark-mode {
 
 .food {
   background-color: #f44336;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.5s ease;
+  animation: food-blink 1s linear infinite;
 }
 
 .food.dark-mode {
   background-color: #FF0000;
+}
+
+@keyframes snake-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(20px, 0); }
+}
+
+@keyframes food-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
