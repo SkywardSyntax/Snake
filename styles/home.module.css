@@ -50,7 +50,7 @@
 }
 
 .snake {
-  background-color: #388e3c;
+  background-color: #00FF00;
   transition: background-color 0.3s ease;
 }
 
@@ -61,7 +61,6 @@
 .food {
   background-color: #ff1744;
   transition: background-color 0.3s ease;
-  animation: food-blink 1s linear infinite;
 }
 
 .food.dark-mode {

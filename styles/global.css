@@ -57,7 +57,7 @@ body.dark-mode {
 }
 
 .snake {
-  background-color: #388e3c;
+  background-color: #00FF00;
   transition: background-color 0.3s ease;
 }
 
@@ -68,7 +68,6 @@ body.dark-mode {
 .food {
   background-color: #ff1744;
   transition: background-color 0.3s ease;
-  animation: food-blink 1s linear infinite;
 }
 
 .food.dark-mode {
@@ -141,9 +140,4 @@ button.btn {
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes food-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
 }
