@@ -1,17 +1,12 @@
 import { useState, useEffect } from 'react';
+import DarkModeToggle from './DarkModeToggle';
 
 const SnakeGame = ({ score, setScore }) => {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [pressedKeys, setPressedKeys] = useState({});
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle('dark-mode', !darkMode);
-  };
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -152,10 +147,6 @@ const SnakeGame = ({ score, setScore }) => {
     };
   }, [snake, direction, food, gameOver, score]);
 
-  useEffect(() => {
-    document.body.classList.toggle('dark-mode', darkMode);
-  }, [darkMode]);
-
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);
     setFood({ x: 15, y: 15 });
@@ -179,9 +170,9 @@ const SnakeGame = ({ score, setScore }) => {
             key={`${row}-${col}`}
             className={`cell ${
               snake.some((segment) => segment.x === col && segment.y === row)
-                ? `snake ${darkMode ? 'dark-mode' : ''}`
+                ? `snake`
                 : food.x === col && food.y === row
-                ? `food ${darkMode ? 'dark-mode' : ''}`
+                ? `food`
                 : ''
             }`}
             style={{
@@ -196,10 +187,8 @@ const SnakeGame = ({ score, setScore }) => {
   );
 
   return (
-    <div className={`snake-game ${darkMode ? 'dark-mode' : ''}`}>
-      <button onClick={toggleDarkMode}>
-        {darkMode ? 'Light Mode' : 'Dark Mode'}
-      </button>
+    <div className="snake-game">
+      <DarkModeToggle />
       <div className="score">Score: {score}</div>
       {gameOver ? renderGameOverScreen() : renderGrid()}
     </div>
