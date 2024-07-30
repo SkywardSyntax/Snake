@@ -19,15 +19,44 @@ const fragmentShaderSource = `
   }
 `;
 
+const snakeMovementShaderSource = `
+  precision mediump float;
+  uniform vec2 u_snakeHead;
+  uniform vec2 u_direction;
+  uniform vec2 u_gridSize;
+  void main() {
+    vec2 newHead = u_snakeHead + u_direction;
+    if (newHead.x < 0.0) newHead.x = u_gridSize.x - 1.0;
+    if (newHead.x >= u_gridSize.x) newHead.x = 0.0;
+    if (newHead.y < 0.0) newHead.y = u_gridSize.y - 1.0;
+    if (newHead.y >= u_gridSize.y) newHead.y = 0.0;
+    gl_FragColor = vec4(newHead, 0.0, 1.0);
+  }
+`;
+
+const collisionDetectionShaderSource = `
+  precision mediump float;
+  uniform vec2 u_snakeHead;
+  uniform vec2 u_snakeSegment;
+  void main() {
+    if (u_snakeHead == u_snakeSegment) {
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    } else {
+      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    }
+  }
+`;
+
 const SnakeGame = ({ score, setScore, gameMode }) => {
   const canvasRef = useRef(null);
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
-  const [pressedKeys, setPressedKeys] = useState({});
   const [gl, setGl] = useState(null);
   const [program, setProgram] = useState(null);
+  const [snakeMovementProgram, setSnakeMovementProgram] = useState(null);
+  const [collisionDetectionProgram, setCollisionDetectionProgram] = useState(null);
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -40,14 +69,15 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   };
 
   const handleKeyDown = (e) => {
-    const newPressedKeys = { ...pressedKeys, [e.key]: true };
-    setPressedKeys(newPressedKeys);
-  };
-
-  const handleKeyUp = (e) => {
-    const newPressedKeys = { ...pressedKeys };
-    delete newPressedKeys[e.key];
-    setPressedKeys(newPressedKeys);
+    if (e.key === 'ArrowUp' && !isOppositeDirection('UP', direction)) {
+      setDirection('UP');
+    } else if (e.key === 'ArrowDown' && !isOppositeDirection('DOWN', direction)) {
+      setDirection('DOWN');
+    } else if (e.key === 'ArrowLeft' && !isOppositeDirection('LEFT', direction)) {
+      setDirection('LEFT');
+    } else if (e.key === 'ArrowRight' && !isOppositeDirection('RIGHT', direction)) {
+      setDirection('RIGHT');
+    }
   };
 
   const disableScroll = (e) => {
@@ -58,59 +88,103 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('keydown', disableScroll);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('keydown', disableScroll);
     };
-  }, [pressedKeys]);
+  }, []);
 
   const moveSnake = (snake, direction) => {
     const newSnake = [...snake];
     const head = { ...newSnake[0] };
 
-    switch (direction) {
-      case 'UP':
-        head.y -= 1;
-        break;
-      case 'DOWN':
-        head.y += 1;
-        break;
-      case 'LEFT':
-        head.x -= 1;
-        break;
-      case 'RIGHT':
-        head.x += 1;
-        break;
-      default:
-        break;
-    }
+    const directionVector = {
+      'UP': { x: 0, y: -1 },
+      'DOWN': { x: 0, y: 1 },
+      'LEFT': { x: -1, y: 0 },
+      'RIGHT': { x: 1, y: 0 },
+    }[direction];
+
+    const newHead = calculateNewHeadPosition(head, directionVector);
 
     if (gameMode === 'no-borders') {
-      if (head.x < 0) head.x = 19;
-      if (head.x >= 20) head.x = 0;
-      if (head.y < 0) head.y = 19;
-      if (head.y >= 20) head.y = 0;
+      if (newHead.x < 0) newHead.x = 19;
+      if (newHead.x >= 20) newHead.x = 0;
+      if (newHead.y < 0) newHead.y = 19;
+      if (newHead.y >= 20) newHead.y = 0;
     }
 
-    newSnake.unshift(head);
+    newSnake.unshift(newHead);
     return newSnake;
   };
 
-  const checkCollision = (head, snake) => {
-    if (gameMode === 'no-borders') {
-      return snake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y);
+  const calculateNewHeadPosition = (head, directionVector) => {
+    const newHead = { ...head };
+    if (!gl) {
+      console.error('WebGL context is null');
+      return newHead;
     }
-    return (
-      head.x < 0 ||
-      head.x >= 20 ||
-      head.y < 0 ||
-      head.y >= 20 ||
-      snake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)
-    );
+    const snakeHeadBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, snakeHeadBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([head.x, head.y]), gl.STATIC_DRAW);
+
+    const directionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, directionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([directionVector.x, directionVector.y]), gl.STATIC_DRAW);
+
+    gl.useProgram(snakeMovementProgram);
+
+    const snakeHeadLocation = gl.getUniformLocation(snakeMovementProgram, 'u_snakeHead');
+    const directionLocation = gl.getUniformLocation(snakeMovementProgram, 'u_direction');
+    const gridSizeLocation = gl.getUniformLocation(snakeMovementProgram, 'u_gridSize');
+
+    gl.uniform2f(snakeHeadLocation, head.x, head.y);
+    gl.uniform2f(directionLocation, directionVector.x, directionVector.y);
+    gl.uniform2f(gridSizeLocation, 20, 20);
+
+    gl.drawArrays(gl.POINTS, 0, 1);
+
+    const newHeadPosition = new Float32Array(2);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, newHeadPosition);
+
+    newHead.x = newHeadPosition[0];
+    newHead.y = newHeadPosition[1];
+
+    return newHead;
+  };
+
+  const checkCollision = (head, snake) => {
+    if (!gl) {
+      console.error('WebGL context is null');
+      return false;
+    }
+    const collisionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, collisionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([head.x, head.y]), gl.STATIC_DRAW);
+
+    gl.useProgram(collisionDetectionProgram);
+
+    const snakeHeadLocation = gl.getUniformLocation(collisionDetectionProgram, 'u_snakeHead');
+    const snakeSegmentLocation = gl.getUniformLocation(collisionDetectionProgram, 'u_snakeSegment');
+
+    gl.uniform2f(snakeHeadLocation, head.x, head.y);
+
+    for (let i = 1; i < snake.length; i++) {
+      const segment = snake[i];
+      gl.uniform2f(snakeSegmentLocation, segment.x, segment.y);
+      gl.drawArrays(gl.POINTS, 0, 1);
+
+      const collisionResult = new Float32Array(4);
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, collisionResult);
+
+      if (collisionResult[0] === 1.0) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   const handleFoodCollision = (head, food) => {
@@ -164,10 +238,22 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     const program = createProgram(gl, vertexShader, fragmentShader);
     setProgram(program);
 
+    const snakeMovementShader = createShader(gl, gl.FRAGMENT_SHADER, snakeMovementShaderSource);
+    const snakeMovementProgram = createProgram(gl, vertexShader, snakeMovementShader);
+    setSnakeMovementProgram(snakeMovementProgram);
+
+    const collisionDetectionShader = createShader(gl, gl.FRAGMENT_SHADER, collisionDetectionShaderSource);
+    const collisionDetectionProgram = createProgram(gl, vertexShader, collisionDetectionShader);
+    setCollisionDetectionProgram(collisionDetectionProgram);
+
     return () => {
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);
       gl.deleteProgram(program);
+      gl.deleteShader(snakeMovementShader);
+      gl.deleteProgram(snakeMovementProgram);
+      gl.deleteShader(collisionDetectionShader);
+      gl.deleteProgram(collisionDetectionProgram);
     };
   }, []);
 
@@ -260,18 +346,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     if (gameOver) return;
 
     const interval = setInterval(() => {
-      let newDirection = direction;
-      if (pressedKeys['ArrowUp'] && !isOppositeDirection('UP', direction)) {
-        newDirection = 'UP';
-      } else if (pressedKeys['ArrowDown'] && !isOppositeDirection('DOWN', direction)) {
-        newDirection = 'DOWN';
-      } else if (pressedKeys['ArrowLeft'] && !isOppositeDirection('LEFT', direction)) {
-        newDirection = 'LEFT';
-      } else if (pressedKeys['ArrowRight'] && !isOppositeDirection('RIGHT', direction)) {
-        newDirection = 'RIGHT';
-      }
-
-      let newSnake = moveSnake(snake, newDirection);
+      let newSnake = moveSnake(snake, direction);
       const head = { ...newSnake[0] };
 
       if (handleFoodCollision(head, food)) {
@@ -284,14 +359,13 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
         setGameOver(true);
       } else {
         setSnake(newSnake);
-        setDirection(newDirection);
       }
     }, gameMode === 'hardcore' ? 50 : 100);
 
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameMode, gameOver, score, pressedKeys]);
+  }, [snake, direction, food, gameMode, gameOver, score]);
 
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);
