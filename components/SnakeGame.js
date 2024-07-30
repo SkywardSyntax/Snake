@@ -7,6 +7,7 @@ const SnakeGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [pressedKeys, setPressedKeys] = useState({});
+  const [score, setScore] = useState(0); // Pafa5
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -127,6 +128,7 @@ const SnakeGame = () => {
           x: Math.floor(Math.random() * 20),
           y: Math.floor(Math.random() * 20),
         });
+        setScore(score + 1); // Pc92b
       } else {
         newSnake.pop();
       }
@@ -149,7 +151,7 @@ const SnakeGame = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameOver]);
+  }, [snake, direction, food, gameOver, score]);
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
@@ -160,6 +162,7 @@ const SnakeGame = () => {
     setFood({ x: 15, y: 15 });
     setDirection('RIGHT');
     setGameOver(false);
+    setScore(0); // Pafa5
   };
 
   const renderGameOverScreen = () => (
@@ -182,6 +185,11 @@ const SnakeGame = () => {
                 ? `food ${darkMode ? 'dark-mode' : ''}`
                 : ''
             }`}
+            style={{
+              backdropFilter: 'blur(10px)',
+              background: 'rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+            }}
           />
         ))
       )}
@@ -193,6 +201,7 @@ const SnakeGame = () => {
       <button onClick={toggleDarkMode}>
         {darkMode ? 'Light Mode' : 'Dark Mode'}
       </button>
+      <div className="score">Score: {score}</div> {/* P1e34 */}
       {gameOver ? renderGameOverScreen() : renderGrid()}
     </div>
   );

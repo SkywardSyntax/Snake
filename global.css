@@ -12,6 +12,9 @@ body {
   text-rendering: optimizeLegibility;
   hyphens: auto;
   overflow: hidden; /* P4084 */
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-mode {
@@ -66,4 +69,16 @@ body.dark-mode {
 @keyframes food-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+.score {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+  transition: color 0.3s ease;
+}
+
+.score.dark-mode {
+  color: #e0e0e0;
 }

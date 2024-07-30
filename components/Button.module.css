@@ -31,22 +31,25 @@ button.btn:focus {
   box-shadow: 0 0 0 2px rgba(0, 118, 255, 0.5);
 }
 
-/* P5e1e */
 button.btn {
   background: linear-gradient(135deg, #0076ff, #00d4ff);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Pb4c1 */
 button.btn {
   transition: all 0.3s ease;
 }
 
-/* P8d87 */
 button.btn:hover {
   background: linear-gradient(135deg, #005bb5, #00a3cc);
   transform: translateY(-2px);
 }
 button.btn:focus {
   box-shadow: 0 0 0 3px rgba(0, 118, 255, 0.7);
+}
+
+button.btn {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

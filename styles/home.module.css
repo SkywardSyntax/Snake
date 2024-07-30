@@ -2,9 +2,10 @@
   padding: 20px 20px 60px;
   max-width: 680px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 
@@ -65,4 +66,16 @@
 
 .food.dark-mode {
   background-color: #FF0000;
+}
+
+.score {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 10px;
+  transition: color 0.3s ease;
+}
+
+.score.dark-mode {
+  color: #e0e0e0;
 }
