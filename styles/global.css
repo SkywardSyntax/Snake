@@ -14,41 +14,6 @@ body {
   overflow: hidden;
 }
 
-.snake-game {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(20, 20px);
-  grid-template-rows: repeat(20, 20px);
-  gap: 0;
-}
-
-.cell {
-  width: 20px;
-  height: 20px;
-  background-color: #8bc34a;
-}
-
-.snake {
-  background-color: #00FF00;
-}
-
-.food {
-  background-color: #ff1744;
-}
-
-.score {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-top: 10px;
-}
-
 button.btn {
   margin: 0;
   border: 1px solid #d1d1d1;
@@ -117,4 +82,10 @@ button.btn:focus {
   padding: 0.75rem 1.5rem;
   font-size: 1.25rem;
   cursor: pointer;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  background-color: #000;
 }
