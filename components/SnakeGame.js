@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 
-const SnakeGame = () => {
+const SnakeGame = ({ score, setScore }) => {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [pressedKeys, setPressedKeys] = useState({});
-  const [score, setScore] = useState(0); // Pafa5
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -128,7 +127,7 @@ const SnakeGame = () => {
           x: Math.floor(Math.random() * 20),
           y: Math.floor(Math.random() * 20),
         });
-        setScore(score + 1); // Pc92b
+        setScore(score + 1);
       } else {
         newSnake.pop();
       }
@@ -162,7 +161,7 @@ const SnakeGame = () => {
     setFood({ x: 15, y: 15 });
     setDirection('RIGHT');
     setGameOver(false);
-    setScore(0); // Pafa5
+    setScore(0);
   };
 
   const renderGameOverScreen = () => (
@@ -201,7 +200,7 @@ const SnakeGame = () => {
       <button onClick={toggleDarkMode}>
         {darkMode ? 'Light Mode' : 'Dark Mode'}
       </button>
-      <div className="score">Score: {score}</div> {/* P1e34 */}
+      <div className="score">Score: {score}</div>
       {gameOver ? renderGameOverScreen() : renderGrid()}
     </div>
   );
