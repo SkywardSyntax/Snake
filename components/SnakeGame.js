@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const SnakeGame = ({ score, setScore }) => {
+const SnakeGame = ({ score, setScore, gameMode }) => {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
@@ -82,11 +82,21 @@ const SnakeGame = ({ score, setScore }) => {
         break;
     }
 
+    if (gameMode === 'no-borders') {
+      if (head.x < 0) head.x = 19;
+      if (head.x >= 20) head.x = 0;
+      if (head.y < 0) head.y = 19;
+      if (head.y >= 20) head.y = 0;
+    }
+
     newSnake.unshift(head);
     return newSnake;
   };
 
   const checkCollision = (head, snake) => {
+    if (gameMode === 'no-borders') {
+      return snake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y);
+    }
     return (
       head.x < 0 ||
       head.x >= 20 ||
@@ -131,7 +141,7 @@ const SnakeGame = ({ score, setScore }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameOver, score]);
+  }, [snake, direction, food, gameMode, gameOver, score]);
 
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);

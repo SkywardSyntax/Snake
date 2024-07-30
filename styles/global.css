@@ -98,3 +98,23 @@ button.btn:hover {
 button.btn:focus {
   box-shadow: 0 0 0 3px rgba(0, 118, 255, 0.7);
 }
+
+.game-mode-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.game-mode-selection h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.game-mode-selection button {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
