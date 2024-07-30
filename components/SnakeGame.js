@@ -42,21 +42,6 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   const handleKeyDown = (e) => {
     const newPressedKeys = { ...pressedKeys, [e.key]: true };
     setPressedKeys(newPressedKeys);
-
-    let newDirection;
-    if (newPressedKeys['ArrowUp']) {
-      newDirection = 'UP';
-    } else if (newPressedKeys['ArrowDown']) {
-      newDirection = 'DOWN';
-    } else if (newPressedKeys['ArrowLeft']) {
-      newDirection = 'LEFT';
-    } else if (newPressedKeys['ArrowRight']) {
-      newDirection = 'RIGHT';
-    }
-
-    if (newDirection && !isOppositeDirection(newDirection, direction)) {
-      setDirection(newDirection);
-    }
   };
 
   const handleKeyUp = (e) => {
@@ -81,7 +66,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('keydown', disableScroll);
     };
-  }, [direction, pressedKeys]);
+  }, [pressedKeys]);
 
   const moveSnake = (snake, direction) => {
     const newSnake = [...snake];
@@ -275,7 +260,18 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     if (gameOver) return;
 
     const interval = setInterval(() => {
-      let newSnake = moveSnake(snake, direction);
+      let newDirection = direction;
+      if (pressedKeys['ArrowUp'] && !isOppositeDirection('UP', direction)) {
+        newDirection = 'UP';
+      } else if (pressedKeys['ArrowDown'] && !isOppositeDirection('DOWN', direction)) {
+        newDirection = 'DOWN';
+      } else if (pressedKeys['ArrowLeft'] && !isOppositeDirection('LEFT', direction)) {
+        newDirection = 'LEFT';
+      } else if (pressedKeys['ArrowRight'] && !isOppositeDirection('RIGHT', direction)) {
+        newDirection = 'RIGHT';
+      }
+
+      let newSnake = moveSnake(snake, newDirection);
       const head = { ...newSnake[0] };
 
       if (handleFoodCollision(head, food)) {
@@ -288,13 +284,14 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
         setGameOver(true);
       } else {
         setSnake(newSnake);
+        setDirection(newDirection);
       }
-    }, 100);
+    }, gameMode === 'hardcore' ? 50 : 100);
 
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameMode, gameOver, score]);
+  }, [snake, direction, food, gameMode, gameOver, score, pressedKeys]);
 
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);

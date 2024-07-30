@@ -17,6 +17,7 @@ function Home() {
           <h2>Select Game Mode</h2>
           <button onClick={() => handleGameModeSelection('classic')}>Classic</button>
           <button onClick={() => handleGameModeSelection('no-borders')}>No Borders</button>
+          <button onClick={() => handleGameModeSelection('hardcore')}>Hardcore</button>
         </div>
       ) : (
         <SnakeGame score={score} setScore={setScore} gameMode={gameMode} />

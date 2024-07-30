@@ -15,6 +15,7 @@ This is a basic implementation of the classic Snake game using React and Next.js
 - **Basic Snake Game**: Control the snake to collect food and grow in length.
 - **WebGL Rendering**: Utilizes WebGL for rendering the game grid and snake.
 - **GPU Computations**: Offloads snake movement and collision detection to the GPU using WebGL shaders.
+- **Hardcore Mode**: A new game mode where the snake moves faster and the game ends if the snake hits the walls.
 
 ### Installation
 
@@ -47,6 +48,12 @@ Ensure that your browser supports WebGL. Most modern browsers support WebGL, but
 - Use the arrow keys to control the direction of the snake.
 - Collect food to grow the snake and increase your score.
 - Avoid colliding with the walls or the snake's own body.
+
+### Game Modes
+
+- **Classic**: The standard game mode where the snake moves at a normal speed and the game ends if the snake hits the walls or itself.
+- **No Borders**: The snake can move through the walls and appear on the opposite side of the grid.
+- **Hardcore**: The snake moves faster and the game ends if the snake hits the walls.
 
 ### Contributing
 
