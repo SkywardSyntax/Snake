@@ -12,14 +12,6 @@ body {
   text-rendering: optimizeLegibility;
   hyphens: auto;
   overflow: hidden;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
 }
 
 .snake-game {
@@ -27,10 +19,6 @@ body.dark-mode {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
 }
 
 .grid {
@@ -38,40 +26,20 @@ body.dark-mode {
   grid-template-columns: repeat(20, 20px);
   grid-template-rows: repeat(20, 20px);
   gap: 0;
-  background: #f5f5f5;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
 }
 
 .cell {
   width: 20px;
   height: 20px;
   background-color: #8bc34a;
-  border-radius: 3px;
-  transition: background-color 0.3s ease;
-}
-
-.cell.dark-mode {
-  background-color: #333;
 }
 
 .snake {
-  background-color: #00FF00;
-  transition: background-color 0.3s ease;
-}
-
-.snake.dark-mode {
   background-color: #00FF00;
 }
 
 .food {
   background-color: #ff1744;
-  transition: background-color 0.3s ease;
-}
-
-.food.dark-mode {
-  background-color: #FF0000;
 }
 
 .score {
@@ -79,11 +47,6 @@ body.dark-mode {
   font-weight: bold;
   color: #333;
   margin-top: 10px;
-  transition: color 0.3s ease;
-}
-
-.score.dark-mode {
-  color: #e0e0e0;
 }
 
 button.btn {
@@ -134,10 +97,4 @@ button.btn:hover {
 }
 button.btn:focus {
   box-shadow: 0 0 0 3px rgba(0, 118, 255, 0.7);
-}
-
-button.btn {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

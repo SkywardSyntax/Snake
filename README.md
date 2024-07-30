@@ -8,14 +8,11 @@ Everything you do here is contained within this one codespace. There is no repos
 
 ## Snake Game
 
-This is a more sophisticated implementation of the classic Snake game using React and Next.js. The game includes advanced features such as levels, power-ups, and multiplayer support. The application also includes a dark mode toggle feature for a better user experience.
+This is a basic implementation of the classic Snake game using React and Next.js.
 
 ### Features
 
-- **Levels**: The game includes multiple levels that increase in difficulty as you progress.
-- **Power-ups**: Collect power-ups to gain special abilities and enhance your gameplay.
-- **Multiplayer Support**: Play with a friend in multiplayer mode.
-- **Dark Mode Toggle**: Switch between light and dark modes for a better user experience.
+- **Basic Snake Game**: Control the snake to collect food and grow in length.
 
 ### Installation
 
@@ -44,27 +41,6 @@ To run this application, follow these steps:
 - Use the arrow keys to control the direction of the snake.
 - Collect food to grow the snake and increase your score.
 - Avoid colliding with the walls or the snake's own body.
-- Collect power-ups to gain special abilities.
-- Progress through levels to increase the difficulty.
-- In multiplayer mode, use the WASD keys to control the second snake.
-
-### Advanced Features
-
-#### Levels
-
-The game includes multiple levels that increase in difficulty as you progress. Each level introduces new challenges and obstacles to keep the gameplay engaging.
-
-#### Power-ups
-
-Collect power-ups to gain special abilities such as speed boost, invincibility, and more. Power-ups appear randomly on the grid and can be collected by the snake.
-
-#### Multiplayer Support
-
-Play with a friend in multiplayer mode. The second player can control their snake using the WASD keys. The game ends if either snake collides with the walls or their own body.
-
-#### Dark Mode Toggle
-
-Switch between light and dark modes for a better user experience. The dark mode toggle feature provides a smoother transition and enhances the overall visual appeal of the game.
 
 ### Contributing
 
