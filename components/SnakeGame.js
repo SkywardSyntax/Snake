@@ -27,6 +27,8 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   const [gameOver, setGameOver] = useState(false);
   const [gl, setGl] = useState(null);
   const [program, setProgram] = useState(null);
+  const previousTimestampRef = useRef(null); // Pd736
+  const [frameRate, setFrameRate] = useState(0); // P1dd2
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -242,13 +244,21 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
 
-    const render = () => {
+    const render = (timestamp) => { // Pd792
+      if (previousTimestampRef.current !== null) {
+        const delta = timestamp - previousTimestampRef.current;
+        const fps = 1000 / delta;
+        setFrameRate(fps.toFixed(2));
+      }
+      previousTimestampRef.current = timestamp;
+
       gl.clear(gl.COLOR_BUFFER_BIT);
       drawSnake();
       drawFood();
+      requestAnimationFrame(render);
     };
 
-    render();
+    requestAnimationFrame(render);
   }, [gl, program, snake, food]);
 
   useEffect(() => {
@@ -294,6 +304,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   return (
     <div className="snake-game">
       <div className="score">Score: {score}</div>
+      <div className="frame-rate">FPS: {frameRate}</div> {/* Pcf84 */}
       <canvas ref={canvasRef} width="400" height="400"></canvas>
       {gameOver && renderGameOverScreen()}
     </div>
