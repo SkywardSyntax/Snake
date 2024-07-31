@@ -23,6 +23,8 @@ function Home() {
           <button onClick={() => handleGameModeSelection('classic')}>Classic</button>
           <button onClick={() => handleGameModeSelection('no-borders')}>No Borders</button>
           <button onClick={() => handleGameModeSelection('hardcore')}>Hardcore</button>
+          <button onClick={() => handleGameModeSelection('time-attack')}>Time Attack</button>
+          <button onClick={() => handleGameModeSelection('survival')}>Survival</button>
         </div>
       ) : (
         <div className="level-selection">
@@ -30,6 +32,8 @@ function Home() {
           <button onClick={() => handleLevelSelection(1)}>Level 1</button>
           <button onClick={() => handleLevelSelection(2)}>Level 2</button>
           <button onClick={() => handleLevelSelection(3)}>Level 3</button>
+          <button onClick={() => handleLevelSelection(4)}>Level 4</button>
+          <button onClick={() => handleLevelSelection(5)}>Level 5</button>
         </div>
       )}
       {gameMode && level && (

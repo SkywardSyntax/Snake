@@ -9,6 +9,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   const [level, setLevel] = useState(1);
   const [powerUps, setPowerUps] = useState([]);
   const [obstacles, setObstacles] = useState([]);
+  const [speedBoost, setSpeedBoost] = useState(false);
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -106,6 +107,10 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     for (let i = 0; i < powerUps.length; i++) {
       if (head.x === powerUps[i].x && head.y === powerUps[i].y) {
         // Handle power-up effect
+        if (powerUps[i].type === 'speed') {
+          setSpeedBoost(true);
+          setTimeout(() => setSpeedBoost(false), 5000);
+        }
         setPowerUps(powerUps.filter((_, index) => index !== i));
         return true;
       }
@@ -129,6 +134,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       newPowerUps.push({
         x: Math.floor(Math.random() * 20),
         y: Math.floor(Math.random() * 20),
+        type: 'speed',
       });
     }
     setPowerUps(newPowerUps);
@@ -140,6 +146,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       newObstacles.push({
         x: Math.floor(Math.random() * 20),
         y: Math.floor(Math.random() * 20),
+        type: 'static',
       });
     }
     setObstacles(newObstacles);
@@ -169,12 +176,12 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       } else {
         setSnake(newSnake);
       }
-    }, gameMode === 'hardcore' ? 50 : 100);
+    }, speedBoost ? 50 : gameMode === 'hardcore' ? 50 : 100);
 
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameMode, gameOver, score, powerUps, obstacles]);
+  }, [snake, direction, food, gameMode, gameOver, score, powerUps, obstacles, speedBoost]);
 
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);

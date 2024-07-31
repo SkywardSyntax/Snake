@@ -209,3 +209,43 @@ canvas {
   background-color: #f00;
   position: absolute;
 }
+
+/* Styles for new power-ups */
+.power-up-speed {
+  background-color: #0f0;
+}
+
+.power-up-invincibility {
+  background-color: #00f;
+}
+
+/* Styles for new obstacles */
+.obstacle-moving {
+  background-color: #f90;
+}
+
+/* Styles for new game modes */
+.game-mode-time-attack {
+  background-color: #ff0;
+}
+
+.game-mode-survival {
+  background-color: #0ff;
+}
+
+/* Styles for new levels */
+.level-2 {
+  background-color: #f0f;
+}
+
+.level-3 {
+  background-color: #0f0;
+}
+
+.level-4 {
+  background-color: #00f;
+}
+
+.level-5 {
+  background-color: #f00;
+}
