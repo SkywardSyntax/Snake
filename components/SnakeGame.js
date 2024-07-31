@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { mat4, vec3 } from 'gl-matrix';
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -155,6 +156,65 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     gl.deleteProgram(program);
   };
 
+  const calculateFrustum = (projectionMatrix, modelViewMatrix) => {
+    const clipMatrix = mat4.create();
+    mat4.multiply(clipMatrix, projectionMatrix, modelViewMatrix);
+
+    const frustum = {
+      left: vec3.create(),
+      right: vec3.create(),
+      bottom: vec3.create(),
+      top: vec3.create(),
+      near: vec3.create(),
+      far: vec3.create(),
+    };
+
+    frustum.left[0] = clipMatrix[3] + clipMatrix[0];
+    frustum.left[1] = clipMatrix[7] + clipMatrix[4];
+    frustum.left[2] = clipMatrix[11] + clipMatrix[8];
+    frustum.left[3] = clipMatrix[15] + clipMatrix[12];
+
+    frustum.right[0] = clipMatrix[3] - clipMatrix[0];
+    frustum.right[1] = clipMatrix[7] - clipMatrix[4];
+    frustum.right[2] = clipMatrix[11] - clipMatrix[8];
+    frustum.right[3] = clipMatrix[15] - clipMatrix[12];
+
+    frustum.bottom[0] = clipMatrix[3] + clipMatrix[1];
+    frustum.bottom[1] = clipMatrix[7] + clipMatrix[5];
+    frustum.bottom[2] = clipMatrix[11] + clipMatrix[9];
+    frustum.bottom[3] = clipMatrix[15] + clipMatrix[13];
+
+    frustum.top[0] = clipMatrix[3] - clipMatrix[1];
+    frustum.top[1] = clipMatrix[7] - clipMatrix[5];
+    frustum.top[2] = clipMatrix[11] - clipMatrix[9];
+    frustum.top[3] = clipMatrix[15] - clipMatrix[13];
+
+    frustum.near[0] = clipMatrix[3] + clipMatrix[2];
+    frustum.near[1] = clipMatrix[7] + clipMatrix[6];
+    frustum.near[2] = clipMatrix[11] + clipMatrix[10];
+    frustum.near[3] = clipMatrix[15] + clipMatrix[14];
+
+    frustum.far[0] = clipMatrix[3] - clipMatrix[2];
+    frustum.far[1] = clipMatrix[7] - clipMatrix[6];
+    frustum.far[2] = clipMatrix[11] - clipMatrix[10];
+    frustum.far[3] = clipMatrix[15] - clipMatrix[14];
+
+    return frustum;
+  };
+
+  const isInFrustum = (frustum, x, y, z) => {
+    const point = vec3.fromValues(x, y, z);
+
+    for (const plane in frustum) {
+      const distance = vec3.dot(frustum[plane], point) + frustum[plane][3];
+      if (distance < 0) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const gl = canvas.getContext('webgl');
@@ -237,11 +297,35 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     gl.uniformMatrix4fv(modelViewMatrixUniformLocation, false, modelViewMatrix);
     gl.uniformMatrix4fv(projectionMatrixUniformLocation, false, projectionMatrix);
 
+    const frustum = calculateFrustum(projectionMatrix, modelViewMatrix);
+
     const drawSnake = () => {
       snake.forEach(segment => {
-        gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
-        const x1 = segment.x * 20;
-        const y1 = segment.y * 20;
+        if (isInFrustum(frustum, segment.x, segment.y, 0)) {
+          gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
+          const x1 = segment.x * 20;
+          const y1 = segment.y * 20;
+          const x2 = x1 + 20;
+          const y2 = y1 + 20;
+          const positions = [
+            x1, y1,
+            x2, y1,
+            x1, y2,
+            x1, y2,
+            x2, y1,
+            x2, y2,
+          ];
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+      });
+    };
+
+    const drawFood = () => {
+      if (isInFrustum(frustum, food.x, food.y, 0)) {
+        gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
+        const x1 = food.x * 20;
+        const y1 = food.y * 20;
         const x2 = x1 + 20;
         const y2 = y1 + 20;
         const positions = [
@@ -254,25 +338,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
-      });
-    };
-
-    const drawFood = () => {
-      gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
-      const x1 = food.x * 20;
-      const y1 = food.y * 20;
-      const x2 = x1 + 20;
-      const y2 = y1 + 20;
-      const positions = [
-        x1, y1,
-        x2, y1,
-        x1, y2,
-        x1, y2,
-        x2, y1,
-        x2, y2,
-      ];
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
     };
 
     const render = (timestamp) => {
