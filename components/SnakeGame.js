@@ -6,6 +6,9 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
+  const [level, setLevel] = useState(1);
+  const [powerUps, setPowerUps] = useState([]);
+  const [obstacles, setObstacles] = useState([]);
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -99,6 +102,49 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     return false;
   };
 
+  const handlePowerUpCollision = (head, powerUps) => {
+    for (let i = 0; i < powerUps.length; i++) {
+      if (head.x === powerUps[i].x && head.y === powerUps[i].y) {
+        // Handle power-up effect
+        setPowerUps(powerUps.filter((_, index) => index !== i));
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleObstacleCollision = (head, obstacles) => {
+    for (let i = 0; i < obstacles.length; i++) {
+      if (head.x === obstacles[i].x && head.y === obstacles[i].y) {
+        setGameOver(true);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const generatePowerUps = () => {
+    const newPowerUps = [];
+    for (let i = 0; i < level; i++) {
+      newPowerUps.push({
+        x: Math.floor(Math.random() * 20),
+        y: Math.floor(Math.random() * 20),
+      });
+    }
+    setPowerUps(newPowerUps);
+  };
+
+  const generateObstacles = () => {
+    const newObstacles = [];
+    for (let i = 0; i < level; i++) {
+      newObstacles.push({
+        x: Math.floor(Math.random() * 20),
+        y: Math.floor(Math.random() * 20),
+      });
+    }
+    setObstacles(newObstacles);
+  };
+
   useEffect(() => {
     if (gameOver) return;
 
@@ -112,7 +158,13 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
         newSnake.pop();
       }
 
-      if (checkCollision(head, newSnake)) {
+      if (handlePowerUpCollision(head, powerUps)) {
+        // Handle power-up effect
+      }
+
+      if (handleObstacleCollision(head, obstacles)) {
+        setGameOver(true);
+      } else if (checkCollision(head, newSnake)) {
         setGameOver(true);
       } else {
         setSnake(newSnake);
@@ -122,7 +174,7 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameMode, gameOver, score]);
+  }, [snake, direction, food, gameMode, gameOver, score, powerUps, obstacles]);
 
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);
@@ -130,12 +182,22 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     setDirection('RIGHT');
     setGameOver(false);
     setScore(0);
+    setLevel(1);
+    setPowerUps([]);
+    setObstacles([]);
+  };
+
+  const handleNextLevel = () => {
+    setLevel(level + 1);
+    generatePowerUps();
+    generateObstacles();
   };
 
   const renderGameOverScreen = () => (
     <div className="game-over-screen">
       <h2>Game Over</h2>
       <button onClick={handleRestart}>Restart</button>
+      <button onClick={handleNextLevel}>Next Level</button>
     </div>
   );
 

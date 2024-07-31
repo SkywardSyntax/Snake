@@ -5,9 +5,14 @@ import styles from '../styles/home.module.css';
 function Home() {
   const [score, setScore] = useState(0);
   const [gameMode, setGameMode] = useState(null);
+  const [level, setLevel] = useState(1);
 
   const handleGameModeSelection = (mode) => {
     setGameMode(mode);
+  };
+
+  const handleLevelSelection = (selectedLevel) => {
+    setLevel(selectedLevel);
   };
 
   return (
@@ -20,7 +25,15 @@ function Home() {
           <button onClick={() => handleGameModeSelection('hardcore')}>Hardcore</button>
         </div>
       ) : (
-        <SnakeGame score={score} setScore={setScore} gameMode={gameMode} />
+        <div className="level-selection">
+          <h2>Select Level</h2>
+          <button onClick={() => handleLevelSelection(1)}>Level 1</button>
+          <button onClick={() => handleLevelSelection(2)}>Level 2</button>
+          <button onClick={() => handleLevelSelection(3)}>Level 3</button>
+        </div>
+      )}
+      {gameMode && level && (
+        <SnakeGame score={score} setScore={setScore} gameMode={gameMode} level={level} />
       )}
     </main>
   );

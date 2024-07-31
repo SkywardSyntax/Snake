@@ -14,6 +14,9 @@ This is a basic implementation of the classic Snake game using React and Next.js
 
 - **Basic Snake Game**: Control the snake to collect food and grow in length.
 - **Hardcore Mode**: A new game mode where the snake moves faster and the game ends if the snake hits the walls.
+- **Multi-Level Gameplay**: Progress through multiple levels with increasing difficulty.
+- **Power-Ups**: Collect power-ups to gain special abilities.
+- **Obstacles**: Avoid obstacles that appear on the grid.
 
 ### Installation
 
@@ -41,13 +44,29 @@ To run this application, follow these steps:
 
 - Use the arrow keys to control the direction of the snake.
 - Collect food to grow the snake and increase your score.
-- Avoid colliding with the walls or the snake's own body.
+- Avoid colliding with the walls, obstacles, or the snake's own body.
+- Collect power-ups to gain special abilities.
 
 ### Game Modes
 
 - **Classic**: The standard game mode where the snake moves at a normal speed and the game ends if the snake hits the walls or itself.
 - **No Borders**: The snake can move through the walls and appear on the opposite side of the grid.
 - **Hardcore**: The snake moves faster and the game ends if the snake hits the walls.
+
+### Multi-Level Gameplay
+
+- Progress through multiple levels with increasing difficulty.
+- Each level introduces new challenges, such as more obstacles and faster snake movement.
+
+### Power-Ups
+
+- Collect power-ups that appear randomly on the grid.
+- Power-ups provide special abilities, such as increased speed, invincibility, or extra points.
+
+### Obstacles
+
+- Avoid obstacles that appear on the grid.
+- Colliding with an obstacle will end the game.
 
 ### Contributing
 
