@@ -19,34 +19,6 @@ const fragmentShaderSource = `
   }
 `;
 
-const snakeMovementShaderSource = `
-  precision mediump float;
-  uniform vec2 u_snakeHead;
-  uniform vec2 u_direction;
-  uniform vec2 u_gridSize;
-  void main() {
-    vec2 newHead = u_snakeHead + u_direction;
-    if (newHead.x < 0.0) newHead.x = u_gridSize.x - 1.0;
-    if (newHead.x >= u_gridSize.x) newHead.x = 0.0;
-    if (newHead.y < 0.0) newHead.y = u_gridSize.y - 1.0;
-    if (newHead.y >= u_gridSize.y) newHead.y = 0.0;
-    gl_FragColor = vec4(newHead, 0.0, 1.0);
-  }
-`;
-
-const collisionDetectionShaderSource = `
-  precision mediump float;
-  uniform vec2 u_snakeHead;
-  uniform vec2 u_snakeSegment;
-  void main() {
-    if (u_snakeHead == u_snakeSegment) {
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    } else {
-      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-    }
-  }
-`;
-
 const SnakeGame = ({ score, setScore, gameMode }) => {
   const canvasRef = useRef(null);
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
@@ -55,8 +27,6 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
   const [gameOver, setGameOver] = useState(false);
   const [gl, setGl] = useState(null);
   const [program, setProgram] = useState(null);
-  const [snakeMovementProgram, setSnakeMovementProgram] = useState(null);
-  const [collisionDetectionProgram, setCollisionDetectionProgram] = useState(null);
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -107,83 +77,34 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       'RIGHT': { x: 1, y: 0 },
     }[direction];
 
-    const newHead = calculateNewHeadPosition(head, directionVector);
+    const newHead = {
+      x: head.x + directionVector.x,
+      y: head.y + directionVector.y,
+    };
 
     if (gameMode === 'no-borders') {
       if (newHead.x < 0) newHead.x = 19;
       if (newHead.x >= 20) newHead.x = 0;
       if (newHead.y < 0) newHead.y = 19;
       if (newHead.y >= 20) newHead.y = 0;
+    } else {
+      if (newHead.x < 0 || newHead.x >= 20 || newHead.y < 0 || newHead.y >= 20) {
+        setGameOver(true);
+        return snake;
+      }
     }
 
     newSnake.unshift(newHead);
     return newSnake;
   };
 
-  const calculateNewHeadPosition = (head, directionVector) => {
-    const newHead = { ...head };
-    if (!gl) {
-      console.error('WebGL context is null');
-      return newHead;
-    }
-    const snakeHeadBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, snakeHeadBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([head.x, head.y]), gl.STATIC_DRAW);
-
-    const directionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, directionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([directionVector.x, directionVector.y]), gl.STATIC_DRAW);
-
-    gl.useProgram(snakeMovementProgram);
-
-    const snakeHeadLocation = gl.getUniformLocation(snakeMovementProgram, 'u_snakeHead');
-    const directionLocation = gl.getUniformLocation(snakeMovementProgram, 'u_direction');
-    const gridSizeLocation = gl.getUniformLocation(snakeMovementProgram, 'u_gridSize');
-
-    gl.uniform2f(snakeHeadLocation, head.x, head.y);
-    gl.uniform2f(directionLocation, directionVector.x, directionVector.y);
-    gl.uniform2f(gridSizeLocation, 20, 20);
-
-    gl.drawArrays(gl.POINTS, 0, 1);
-
-    const newHeadPosition = new Float32Array(2);
-    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, newHeadPosition);
-
-    newHead.x = newHeadPosition[0];
-    newHead.y = newHeadPosition[1];
-
-    return newHead;
-  };
-
   const checkCollision = (head, snake) => {
-    if (!gl) {
-      console.error('WebGL context is null');
-      return false;
-    }
-    const collisionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, collisionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([head.x, head.y]), gl.STATIC_DRAW);
-
-    gl.useProgram(collisionDetectionProgram);
-
-    const snakeHeadLocation = gl.getUniformLocation(collisionDetectionProgram, 'u_snakeHead');
-    const snakeSegmentLocation = gl.getUniformLocation(collisionDetectionProgram, 'u_snakeSegment');
-
-    gl.uniform2f(snakeHeadLocation, head.x, head.y);
-
     for (let i = 1; i < snake.length; i++) {
-      const segment = snake[i];
-      gl.uniform2f(snakeSegmentLocation, segment.x, segment.y);
-      gl.drawArrays(gl.POINTS, 0, 1);
-
-      const collisionResult = new Float32Array(4);
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, collisionResult);
-
-      if (collisionResult[0] === 1.0) {
+      if (head.x === snake[i].x && head.y === snake[i].y) {
+        setGameOver(true);
         return true;
       }
     }
-
     return false;
   };
 
@@ -238,22 +159,10 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     const program = createProgram(gl, vertexShader, fragmentShader);
     setProgram(program);
 
-    const snakeMovementShader = createShader(gl, gl.FRAGMENT_SHADER, snakeMovementShaderSource);
-    const snakeMovementProgram = createProgram(gl, vertexShader, snakeMovementShader);
-    setSnakeMovementProgram(snakeMovementProgram);
-
-    const collisionDetectionShader = createShader(gl, gl.FRAGMENT_SHADER, collisionDetectionShaderSource);
-    const collisionDetectionProgram = createProgram(gl, vertexShader, collisionDetectionShader);
-    setCollisionDetectionProgram(collisionDetectionProgram);
-
     return () => {
       gl.deleteShader(vertexShader);
       gl.deleteShader(fragmentShader);
       gl.deleteProgram(program);
-      gl.deleteShader(snakeMovementShader);
-      gl.deleteProgram(snakeMovementProgram);
-      gl.deleteShader(collisionDetectionShader);
-      gl.deleteProgram(collisionDetectionProgram);
     };
   }, []);
 
