@@ -19,6 +19,7 @@ This is a basic implementation of the classic Snake game using React and Next.js
 - **Obstacles**: Avoid obstacles that appear on the grid.
 - **New Game Modes**: Time Attack and Survival modes.
 - **New Levels**: Additional levels with unique challenges and obstacles.
+- **Visual Enhancements**: Added animations for snake movements and transitions, new styles for buttons, game elements, and backgrounds.
 
 ### Installation
 
@@ -48,6 +49,7 @@ To run this application, follow these steps:
 - Collect food to grow the snake and increase your score.
 - Avoid colliding with the walls, obstacles, or the snake's own body.
 - Collect power-ups to gain special abilities.
+- Enjoy the new visual enhancements, including animations and updated styles.
 
 ### Game Modes
 
@@ -72,6 +74,12 @@ To run this application, follow these steps:
 - Avoid obstacles that appear on the grid.
 - Colliding with an obstacle will end the game.
 - New obstacle types, including moving obstacles.
+
+### Visual Enhancements
+
+- Added animations for snake movements and transitions.
+- Updated styles for buttons, game elements, and backgrounds.
+- New CSS classes for power-ups, obstacles, and game-over screen.
 
 ### Contributing
 

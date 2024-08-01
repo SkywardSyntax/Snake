@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 
-const SnakeGame = ({ score, setScore, gameMode }) => {
+const SnakeGame = ({ score, setScore, gameMode, level }) => {
   const canvasRef = useRef(null);
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
-  const [level, setLevel] = useState(1);
   const [powerUps, setPowerUps] = useState([]);
   const [obstacles, setObstacles] = useState([]);
   const [speedBoost, setSpeedBoost] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60); // For Time Attack mode
+  const [survivalDifficulty, setSurvivalDifficulty] = useState(1); // For Survival mode
 
   const isOppositeDirection = (newDirection, currentDirection) => {
     const opposites = {
@@ -98,6 +99,11 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
         y: Math.floor(Math.random() * 20),
       });
       setScore(score + 1);
+      if (gameMode === 'time-attack') {
+        setTimeLeft(timeLeft + 5); // Add 5 seconds for each food eaten
+      } else if (gameMode === 'survival') {
+        setSurvivalDifficulty(survivalDifficulty + 1); // Increase difficulty for each food eaten
+      }
       return true;
     }
     return false;
@@ -176,12 +182,22 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       } else {
         setSnake(newSnake);
       }
+
+      if (gameMode === 'time-attack') {
+        setTimeLeft(timeLeft - 1);
+        if (timeLeft <= 0) {
+          setGameOver(true);
+        }
+      } else if (gameMode === 'survival') {
+        // Increase difficulty over time
+        setSurvivalDifficulty(survivalDifficulty + 0.01);
+      }
     }, speedBoost ? 50 : gameMode === 'hardcore' ? 50 : 100);
 
     return () => {
       clearInterval(interval);
     };
-  }, [snake, direction, food, gameMode, gameOver, score, powerUps, obstacles, speedBoost]);
+  }, [snake, direction, food, gameMode, gameOver, score, powerUps, obstacles, speedBoost, timeLeft, survivalDifficulty]);
 
   const handleRestart = () => {
     setSnake([{ x: 10, y: 10 }]);
@@ -189,13 +205,13 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
     setDirection('RIGHT');
     setGameOver(false);
     setScore(0);
-    setLevel(1);
     setPowerUps([]);
     setObstacles([]);
+    setTimeLeft(60); // Reset time for Time Attack mode
+    setSurvivalDifficulty(1); // Reset difficulty for Survival mode
   };
 
   const handleNextLevel = () => {
-    setLevel(level + 1);
     generatePowerUps();
     generateObstacles();
   };
@@ -205,12 +221,15 @@ const SnakeGame = ({ score, setScore, gameMode }) => {
       <h2>Game Over</h2>
       <button onClick={handleRestart}>Restart</button>
       <button onClick={handleNextLevel}>Next Level</button>
+      <div className="game-over-animation"></div>
     </div>
   );
 
   return (
     <div className="snake-game">
       <div className="score">Score: {score}</div>
+      {gameMode === 'time-attack' && <div className="time-left">Time Left: {timeLeft}s</div>}
+      {gameMode === 'survival' && <div className="difficulty">Difficulty: {survivalDifficulty.toFixed(2)}</div>}
       <canvas ref={canvasRef} width="400" height="400"></canvas>
       {gameOver && renderGameOverScreen()}
     </div>
