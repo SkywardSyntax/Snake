@@ -63,3 +63,60 @@ button.btn:hover {
 button.btn:focus {
   box-shadow: 0 0 0 3px rgba(0, 118, 255, 0.7);
 }
+
+.board {
+  display: grid;
+  grid-template-rows: repeat(20, 1fr);
+  grid-template-columns: repeat(20, 1fr);
+  gap: 2px;
+  width: 600px;
+  height: 600px;
+  margin: 20px auto;
+  border: 2px solid #333;
+  background-color: #f0f0f0;
+}
+
+.row {
+  display: contents;
+}
+
+.cell {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+.snake {
+  background-color: #4caf50;
+}
+
+.food {
+  background-color: #ff5722;
+}
+
+.game-over {
+  text-align: center;
+  font-size: 24px;
+  color: red;
+  margin-top: 20px;
+}
+
+.game-mode-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.game-mode-selection h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.game-mode-selection button {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
