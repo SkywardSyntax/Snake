@@ -13,23 +13,24 @@ const getRandomPosition = () => {
 const NoBordersGame = () => {
   const [snake, setSnake] = useState([{ x: 2, y: 2 }]);
   const [food, setFood] = useState(getRandomPosition());
-  const [direction, setDirection] = useState({ x: 1, y: 0 });
+  const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       switch (e.key) {
         case 'ArrowUp':
-          setDirection({ x: 0, y: -1 });
+          if (direction !== 'DOWN') setDirection('UP');
           break;
         case 'ArrowDown':
-          setDirection({ x: 0, y: 1 });
+          if (direction !== 'UP') setDirection('DOWN');
           break;
         case 'ArrowLeft':
-          setDirection({ x: -1, y: 0 });
+          if (direction !== 'RIGHT') setDirection('LEFT');
           break;
         case 'ArrowRight':
-          setDirection({ x: 1, y: 0 });
+          if (direction !== 'LEFT') setDirection('RIGHT');
           break;
       }
     };
@@ -39,17 +40,32 @@ const NoBordersGame = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [direction]);
 
   useEffect(() => {
     if (gameOver) return;
 
-    const interval = setInterval(() => {
+    const moveSnake = () => {
       setSnake((prevSnake) => {
         const newSnake = [...prevSnake];
         const head = { ...newSnake[0] };
-        head.x += direction.x;
-        head.y += direction.y;
+
+        switch (direction) {
+          case 'UP':
+            head.y -= 1;
+            break;
+          case 'DOWN':
+            head.y += 1;
+            break;
+          case 'LEFT':
+            head.x -= 1;
+            break;
+          case 'RIGHT':
+            head.x += 1;
+            break;
+        }
+
+        newSnake.unshift(head);
 
         // Handle no borders logic
         if (head.x < 0) head.x = WIDTH / CELL_SIZE - 1;
@@ -57,10 +73,9 @@ const NoBordersGame = () => {
         if (head.y < 0) head.y = HEIGHT / CELL_SIZE - 1;
         if (head.y >= HEIGHT / CELL_SIZE) head.y = 0;
 
-        newSnake.unshift(head);
-
         if (head.x === food.x && head.y === food.y) {
           setFood(getRandomPosition());
+          setScore(score + 1);
         } else {
           newSnake.pop();
         }
@@ -75,7 +90,9 @@ const NoBordersGame = () => {
 
         return newSnake;
       });
-    }, 100);
+    };
+
+    const interval = setInterval(moveSnake, 200);
 
     return () => clearInterval(interval);
   }, [direction, food, gameOver]);
@@ -83,6 +100,7 @@ const NoBordersGame = () => {
   return (
     <div>
       <h1>No Borders Game</h1>
+      <div>Score: {score}</div>
       <div
         style={{
           position: 'relative',

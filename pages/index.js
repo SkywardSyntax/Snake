@@ -1,23 +1,25 @@
 import { useRouter } from 'next/router';
+import Game from './game';
 
 export default function Home() {
   const router = useRouter();
 
-  const handleDefaultGameClick = () => {
-    router.push('/game?mode=default');
-  };
-
-  const handleNoBordersGameClick = () => {
-    router.push('/game?mode=noBorders');
+  const handleGameModeSelection = (mode) => {
+    router.push({
+      pathname: '/game',
+      query: { mode },
+    });
   };
 
   return (
     <div className="game-mode-selection">
-      <h1>Snake Game</h1>
-      <div>
-        <button className="btn" onClick={handleDefaultGameClick}>Default Game</button>
-        <button className="btn" onClick={handleNoBordersGameClick}>No Borders</button>
-      </div>
+      <h1>Select Game Mode</h1>
+      <button className="btn" onClick={() => handleGameModeSelection('default')}>
+        Default Game
+      </button>
+      <button className="btn" onClick={() => handleGameModeSelection('noBorders')}>
+        No Borders Game
+      </button>
     </div>
   );
 }

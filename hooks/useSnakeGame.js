@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react';
 
-const DefaultGame = () => {
+const CELL_SIZE = 20;
+const WIDTH = 600;
+const HEIGHT = 600;
+
+const getRandomPosition = () => {
+  const x = Math.floor(Math.random() * (WIDTH / CELL_SIZE));
+  const y = Math.floor(Math.random() * (HEIGHT / CELL_SIZE));
+  return { x, y };
+};
+
+const useSnakeGame = (mode) => {
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-  const [food, setFood] = useState({ x: 15, y: 15 });
+  const [food, setFood] = useState(getRandomPosition());
   const [direction, setDirection] = useState('RIGHT');
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
@@ -57,23 +67,31 @@ const DefaultGame = () => {
 
         newSnake.unshift(head);
         if (head.x === food.x && head.y === food.y) {
-          setFood({
-            x: Math.floor(Math.random() * 20),
-            y: Math.floor(Math.random() * 20),
-          });
+          setFood(getRandomPosition());
           setScore(score + 1);
         } else {
           newSnake.pop();
         }
 
-        if (
-          head.x < 0 ||
-          head.x >= 20 ||
-          head.y < 0 ||
-          head.y >= 20 ||
-          newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)
-        ) {
-          setGameOver(true);
+        if (mode === 'default') {
+          if (
+            head.x < 0 ||
+            head.x >= WIDTH / CELL_SIZE ||
+            head.y < 0 ||
+            head.y >= HEIGHT / CELL_SIZE ||
+            newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)
+          ) {
+            setGameOver(true);
+          }
+        } else if (mode === 'noBorders') {
+          if (head.x < 0) head.x = WIDTH / CELL_SIZE - 1;
+          if (head.x >= WIDTH / CELL_SIZE) head.x = 0;
+          if (head.y < 0) head.y = HEIGHT / CELL_SIZE - 1;
+          if (head.y >= HEIGHT / CELL_SIZE) head.y = 0;
+
+          if (newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)) {
+            setGameOver(true);
+          }
         }
 
         return newSnake;
@@ -85,31 +103,9 @@ const DefaultGame = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [direction, food, gameOver]);
+  }, [direction, food, gameOver, mode]);
 
-  return (
-    <div>
-      <h1>Default Game</h1>
-      <div>Score: {score}</div>
-      <div className="board">
-        {Array.from({ length: 20 }).map((_, rowIndex) => (
-          <div key={rowIndex} className="row">
-            {Array.from({ length: 20 }).map((_, colIndex) => {
-              const isSnake = snake.some((segment) => segment.x === colIndex && segment.y === rowIndex);
-              const isFood = food.x === colIndex && food.y === rowIndex;
-              return (
-                <div
-                  key={colIndex}
-                  className={`cell ${isSnake ? 'snake' : ''} ${isFood ? 'food' : ''}`}
-                />
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      {gameOver && <div className="game-over">Game Over</div>}
-    </div>
-  );
+  return { snake, food, direction, gameOver, score };
 };
 
-export default DefaultGame;
+export default useSnakeGame;

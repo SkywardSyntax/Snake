@@ -6,18 +6,9 @@ You've got a blank canvas to work on from a git perspective as well. There's a s
 
 Everything you do here is contained within this one codespace. There is no repository on GitHub yet. If and when you’re ready you can click "Publish Branch" and we’ll create your repository and push up your project. If you were just exploring then and have no further need for this code then you can simply delete your codespace and it's gone forever.
 
-## Snake Game
+## Snake Game with Score
 
-This is a basic snake game implementation using React and Next.js.
-
-### Features
-
-- **Game Mode Selection**: Choose between the default game mode and the 'no Borders' game mode.
-- **Default Game Mode**: A basic snake game that includes a game board, snake, food, and basic controls.
-- **No Borders Game Mode**: A variation of the snake game where the snake comes through the opposing border instead of ending the game.
-- **Consistent Game Field**: The game field appearance is consistent in both default and no borders versions.
-- **Visually Appealing Game Selection Screen**: The game selection screen is visually appealing.
-- **Snake Movement Logic**: The snake ignores commands to move in the opposite direction.
+This repository contains a basic snake game implementation using React and Next.js. The game includes a scoring feature that tracks the player's score.
 
 ### Installation
 
@@ -41,13 +32,13 @@ To run this application, follow these steps:
 
 4. Open your browser and navigate to `http://localhost:3000` to see the application in action.
 
-### How to Play
+### Game Modes
 
-- Use the arrow keys to control the snake's movement.
-- The objective is to eat the food that appears on the game board.
-- The game ends if the snake collides with itself or the walls (in default game mode).
-- In 'no Borders' game mode, the snake comes through the opposing border instead of ending the game.
-- The snake ignores commands to move in the opposite direction.
+The game includes two modes: Default Game and No Borders Game. You can select the game mode on the home page.
+
+### Scoring Feature
+
+The snake game includes a scoring feature that tracks the player's score. The score is incremented by 1 each time the snake eats food. The current score is displayed on the game screen above the game board.
 
 ### Contributing
 
