@@ -73,7 +73,12 @@ const useSnakeGame = (mode) => {
           newSnake.pop();
         }
 
-        if (mode === 'default') {
+        if (mode === 'noBorders') {
+          if (head.x < 0) head.x = WIDTH / CELL_SIZE - 1;
+          if (head.x >= WIDTH / CELL_SIZE) head.x = 0;
+          if (head.y < 0) head.y = HEIGHT / CELL_SIZE - 1;
+          if (head.y >= HEIGHT / CELL_SIZE) head.y = 0;
+        } else {
           if (
             head.x < 0 ||
             head.x >= WIDTH / CELL_SIZE ||
@@ -81,15 +86,6 @@ const useSnakeGame = (mode) => {
             head.y >= HEIGHT / CELL_SIZE ||
             newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)
           ) {
-            setGameOver(true);
-          }
-        } else if (mode === 'noBorders') {
-          if (head.x < 0) head.x = WIDTH / CELL_SIZE - 1;
-          if (head.x >= WIDTH / CELL_SIZE) head.x = 0;
-          if (head.y < 0) head.y = HEIGHT / CELL_SIZE - 1;
-          if (head.y >= HEIGHT / CELL_SIZE) head.y = 0;
-
-          if (newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)) {
             setGameOver(true);
           }
         }

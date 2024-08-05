@@ -4,7 +4,7 @@
     "cpus": 4
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "npm install && npm run build",
+  "updateContentCommand": "npm install && npm install styled-components && npm run build",
   "postCreateCommand": "",
   "postAttachCommand": {
     "server": "npm run dev"

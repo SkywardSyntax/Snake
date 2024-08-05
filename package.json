@@ -8,6 +8,8 @@
   "dependencies": {
     "next": "^14.1.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "styled": "^1.0.0",
+    "styled-components": "^5.3.11"
   }
 }

@@ -67,7 +67,6 @@ const NoBordersGame = () => {
 
         newSnake.unshift(head);
 
-        // Handle no borders logic
         if (head.x < 0) head.x = WIDTH / CELL_SIZE - 1;
         if (head.x >= WIDTH / CELL_SIZE) head.x = 0;
         if (head.y < 0) head.y = HEIGHT / CELL_SIZE - 1;
