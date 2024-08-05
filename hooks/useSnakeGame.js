@@ -78,13 +78,18 @@ const useSnakeGame = (mode) => {
           if (head.x >= WIDTH / CELL_SIZE) head.x = 0;
           if (head.y < 0) head.y = HEIGHT / CELL_SIZE - 1;
           if (head.y >= HEIGHT / CELL_SIZE) head.y = 0;
-        } else {
+        }
+
+        if (newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)) {
+          setGameOver(true);
+        }
+
+        if (mode !== 'noBorders') {
           if (
             head.x < 0 ||
             head.x >= WIDTH / CELL_SIZE ||
             head.y < 0 ||
-            head.y >= HEIGHT / CELL_SIZE ||
-            newSnake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)
+            head.y >= HEIGHT / CELL_SIZE
           ) {
             setGameOver(true);
           }

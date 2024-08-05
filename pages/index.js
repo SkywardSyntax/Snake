@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import Game from './game';
 
 export default function Home() {
   const router = useRouter();

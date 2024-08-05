@@ -30,7 +30,9 @@ const GameOverMessage = styled.div`
   margin-top: 20px;
 `;
 
-const Game = ({ mode }) => {
+const Game = () => {
+  const router = useRouter();
+  const { mode } = router.query;
   const { snake, food, gameOver, score } = useSnakeGame(mode);
 
   return (
