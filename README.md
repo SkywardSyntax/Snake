@@ -25,12 +25,17 @@ To run this application, follow these steps:
    npm install
    ```
 
-3. Run the development server:
+3. Install the new dependency:
+   ```bash
+   npm install gl-matrix
+   ```
+
+4. Run the development server:
    ```bash
    npm run dev
    ```
 
-4. Open your browser and navigate to `http://localhost:3000` to see the application in action.
+5. Open your browser and navigate to `http://localhost:3000` to see the application in action.
 
 ### Game Modes
 
@@ -39,6 +44,26 @@ The game includes two modes: Default Game and No Borders Game. You can select th
 ### Scoring Feature
 
 The snake game includes a scoring feature that tracks the player's score. The score is incremented by 1 each time the snake eats food. The current score is displayed on the game screen above the game board.
+
+### GPU Acceleration with WebGL
+
+The snake game now utilizes WebGL for GPU acceleration to handle game updates and state management. This integration leverages WebGL shaders for snake movement and collision detection, providing improved performance.
+
+#### How WebGL is Integrated
+
+- The game logic, including snake movement and collision detection, is handled by WebGL shaders executed on the GPU.
+- The rendering of the game board and elements is managed by WebGL, leveraging GPU acceleration for improved performance.
+
+#### Running the Game with GPU Acceleration
+
+To run the game with GPU acceleration enabled, follow these steps:
+
+1. Ensure that you have installed the `gl-matrix` dependency as mentioned in the installation instructions.
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+3. Open your browser and navigate to `http://localhost:3000` to see the application in action.
 
 ### Contributing
 

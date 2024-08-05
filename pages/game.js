@@ -35,6 +35,10 @@ const Game = () => {
   const { mode } = router.query;
   const { snake, food, gameOver, score } = useSnakeGame(mode);
 
+  const isWithinBounds = (x, y) => {
+    return x >= 0 && x < WIDTH / CELL_SIZE && y >= 0 && y < HEIGHT / CELL_SIZE;
+  };
+
   return (
     <div>
       <h1>{mode === 'default' ? 'Default Game' : 'No Borders Game'}</h1>
@@ -43,7 +47,7 @@ const Game = () => {
         {snake.map((segment, index) => (
           <Cell key={index} x={segment.x} y={segment.y} isSnake />
         ))}
-        <Cell x={food.x} y={food.y} isFood />
+        {isWithinBounds(food.x, food.y) && <Cell x={food.x} y={food.y} isFood />}
       </Board>
       {gameOver && <GameOverMessage>Game Over</GameOverMessage>}
     </div>

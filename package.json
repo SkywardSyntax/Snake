@@ -3,9 +3,11 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "build:webgl": "webpack --config webpack.webgl.config.js"
   },
   "dependencies": {
+    "gl-matrix": "^3.4.3",
     "next": "^14.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
