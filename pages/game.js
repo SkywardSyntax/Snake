@@ -1,17 +1,27 @@
 import { useRouter } from 'next/router';
 import useSnakeGame from '../hooks/useSnakeGame';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const CELL_SIZE = 20;
 const WIDTH = 600;
 const HEIGHT = 600;
 
+const frostedGlass = `
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+`;
+
 const Board = styled.div`
   position: relative;
   width: ${WIDTH}px;
   height: ${HEIGHT}px;
-  background: #f0f0f0;
-  border: 1px solid #333;
+  ${frostedGlass}
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
 `;
 
 const Cell = styled.div`
@@ -21,6 +31,7 @@ const Cell = styled.div`
   background: ${(props) => (props.isSnake ? '#4caf50' : props.isFood ? '#ff5722' : '#fff')};
   left: ${(props) => props.x * CELL_SIZE}px;
   top: ${(props) => props.y * CELL_SIZE}px;
+  transition: transform 0.2s ease-in-out;
 `;
 
 const GameOverMessage = styled.div`
@@ -28,6 +39,27 @@ const GameOverMessage = styled.div`
   font-size: 24px;
   color: red;
   margin-top: 20px;
+`;
+
+const BackButton = styled.button`
+  ${frostedGlass}
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background 0.3s ease-in-out;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 `;
 
 const Game = () => {
@@ -39,8 +71,12 @@ const Game = () => {
     return x >= 0 && x < WIDTH / CELL_SIZE && y >= 0 && y < HEIGHT / CELL_SIZE;
   };
 
+  const handleBackButtonClick = () => {
+    router.push('/');
+  };
+
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h1>{mode === 'default' ? 'Default Game' : 'No Borders Game'}</h1>
       <div>Score: {score}</div>
       <Board>
@@ -50,6 +86,7 @@ const Game = () => {
         {isWithinBounds(food.x, food.y) && <Cell x={food.x} y={food.y} isFood />}
       </Board>
       {gameOver && <GameOverMessage>Game Over</GameOverMessage>}
+      <BackButton onClick={handleBackButtonClick}>Back to Game Mode Selection</BackButton>
     </div>
   );
 };
